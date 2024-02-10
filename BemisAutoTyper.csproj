@@ -9,4 +9,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="WindowsInput" Version="6.4.1" />
+  </ItemGroup>
+
 </Project>
