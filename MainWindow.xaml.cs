@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BemisAutoTyper
 {
@@ -22,9 +23,46 @@ namespace BemisAutoTyper
     /// </summary>
     /// 
 
+
     public partial class MainWindow : System.Windows.Window
     {
+        // Import the SendInput function
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
 
+        // Input structure for SendInput function
+        [StructLayout(LayoutKind.Sequential)]
+        struct INPUT
+        {
+            public uint Type;
+            public INPUTUNION Data;
+        }
+
+        // Input types
+        const int INPUT_KEYBOARD = 1;
+
+        // Keyboard input structure
+        [StructLayout(LayoutKind.Sequential)]
+        struct KEYBDINPUT
+        {
+            public ushort Vk;
+            public ushort Scan;
+            public uint Flags;
+            public uint Time;
+            public IntPtr ExtraInfo;
+        }
+
+        // Union for keyboard input structure
+        [StructLayout(LayoutKind.Explicit)]
+        struct INPUTUNION
+        {
+            [FieldOffset(0)]
+            public KEYBDINPUT ki;
+        }
+
+        // Keyboard event flags
+        const uint KEYEVENTF_KEYDOWN = 0x0000;
+        const uint KEYEVENTF_KEYUP = 0x0002;
         public MainWindow()
         {
             InitializeComponent();
@@ -97,12 +135,74 @@ namespace BemisAutoTyper
             // Check if the F8 key is pressed
             if (e.Key == Key.F8)
             {
+                INPUT input = new INPUT();
+                input.Type = INPUT_KEYBOARD;
+                input.Data.ki.Vk = 0x41; // Virtual key code for "A"
+                input.Data.ki.Flags = KEYEVENTF_KEYDOWN;                
+                uint result1 = SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
+                if (result1 == 0)
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    MessageBox.Show($"SendInput failed with error code: {error}");
+                }
+
+                // Simulate key release
+                input.Data.ki.Flags = KEYEVENTF_KEYUP;
+                uint result2 = SendInput(1, new INPUT[] { input }, Marshal.SizeOf(typeof(INPUT)));
+                if (result2 == 0)
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    MessageBox.Show($"SendInput failed with error code: {error}");
+                }
+
                 // Get the text from the TextBox
-                string textToType = DataTextBox.Text;
+                //string textToType = DataTextBox.Text;
 
                 // Simulate typing the text
-                
+                //SimulateTyping(textToType);
+
             }
         }
+        private void SimulateTyping(string text)
+        {
+            INPUT[] inputs = new INPUT[text.Length * 2];
+
+            for (int i = 0; i < text.Length; i++)
+            {
+                // Get the virtual key code for the character
+                ushort vk = (ushort)MapVirtualKey(text[i], MAPVK_VK_TO_VSC);
+
+                // Keydown event
+                inputs[2 * i].Type = INPUT_KEYBOARD;
+                inputs[2 * i].Data.ki.Vk = vk;
+                inputs[2 * i].Data.ki.Scan = 0;
+                inputs[2 * i].Data.ki.Flags = KEYEVENTF_KEYDOWN;
+                inputs[2 * i].Data.ki.Time = 0;
+                inputs[2 * i].Data.ki.ExtraInfo = IntPtr.Zero;
+
+                // Keyup event
+                inputs[2 * i + 1].Type = INPUT_KEYBOARD;
+                inputs[2 * i + 1].Data.ki.Vk = vk;
+                inputs[2 * i + 1].Data.ki.Scan = 0;
+                inputs[2 * i + 1].Data.ki.Flags = KEYEVENTF_KEYUP;
+                inputs[2 * i + 1].Data.ki.Time = 0;
+                inputs[2 * i + 1].Data.ki.ExtraInfo = IntPtr.Zero;
+            }
+
+            uint result = SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(INPUT)));
+            if (result == 0)
+            {
+                int error = Marshal.GetLastWin32Error();
+                MessageBox.Show($"SendInput failed with error code: {error}");
+            }
+        }
+        // P/Invoke declaration for MapVirtualKey function
+        [DllImport("user32.dll")]
+        public static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
+        // Constants for the MapVirtualKey function
+        private const uint MAPVK_VK_TO_VSC = 0x00;
+
+
     }
 }
