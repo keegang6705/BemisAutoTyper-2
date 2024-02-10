@@ -89,7 +89,6 @@ namespace BemisAutoTyper
         }
         private async void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            // Check if the F8 key is pressed
             if (e.Key == Key.F8)
             {
                 // Get the text from the TextBox
@@ -102,37 +101,48 @@ namespace BemisAutoTyper
                     return;
                 }
 
+                // Clear progress bar before typing
+                TypeProgressbar.Value = 0;
+
                 // Start typing based on the specified settings
                 await StartTypingAsync(textToType, interval, TurboModeCheckBox.IsChecked);
             }
         }
 
-        // Inside your StartTyping method
         private async Task StartTypingAsync(string text, int interval, bool? turboMode)
         {
-            // Check if turboMode is enabled
+            int totalCharacters = text.Length;
+
             if (turboMode ?? false)
             {
-                // Type all characters instantly
-                foreach (char c in text)
+                for (int i = 0; i < text.Length; i++)
                 {
-                    // Convert character to upper case to ensure correct virtual key code
-                    keybd_event((byte)char.ToUpper(c), 0, KEYEVENTF_KEYDOWN, UIntPtr.Zero); // Key down
-                    keybd_event((byte)char.ToUpper(c), 0, KEYEVENTF_KEYUP, UIntPtr.Zero);   // Key up
+                    // Update progress bar
+                    Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = (i + 1) * 100 / totalCharacters);
+
+                    keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYDOWN, UIntPtr.Zero); // Key down
+                    keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYUP, UIntPtr.Zero);   // Key up
                 }
             }
             else
             {
-                // Type each character with the specified interval
-                foreach (char c in text)
+                for (int i = 0; i < text.Length; i++)
                 {
-                    // Convert character to upper case to ensure correct virtual key code
-                    keybd_event((byte)char.ToUpper(c), 0, KEYEVENTF_KEYDOWN, UIntPtr.Zero); // Key down
-                    keybd_event((byte)char.ToUpper(c), 0, KEYEVENTF_KEYUP, UIntPtr.Zero);   // Key up
+                    // Update progress bar
+                    Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = (i + 1) * 100 / totalCharacters);
+
+                    keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYDOWN, UIntPtr.Zero); // Key down
+                    keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYUP, UIntPtr.Zero);   // Key up
+
                     await Task.Delay(interval);
                 }
             }
+
+            // Ensure the progress bar reaches 100% after typing is completed
+            Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = 100);
         }
+
+
 
 
     }
