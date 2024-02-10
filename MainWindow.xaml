@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BemisAutoTyper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="400" Width="400"
         Topmost="True">
     <Grid Background="#333">
         <Grid.RowDefinitions>
@@ -13,8 +13,8 @@
             <!--border-->
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="70" />
+            <RowDefinition Height="70"/>
             <RowDefinition Height="5"/>
             <!--border-->
         </Grid.RowDefinitions>
