@@ -17,7 +17,7 @@ namespace BemisAutoTyper
     {
         [DllImport("user32.dll")]
         private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
-
+        private bool IS_RUNNING = false;
         private const int KEYEVENTF_KEYDOWN = 0x0000;
         private const int KEYEVENTF_KEYUP = 0x0002;
         public MainWindow()
@@ -66,15 +66,24 @@ namespace BemisAutoTyper
             else if (string.IsNullOrEmpty(text)){
                 return "empty";
             }else{
-                if (int.Parse(text) > 1000)
+                try
+                {
+                    if (int.Parse(text) > 1000)
+                    {
+                        return "1000+";
+                    }
+                    else if (int.Parse(text) < 0)
+                    {
+                        return "1-";
+                    }
+                    else
+                    {
+                        return "empty";
+                    }
+                } 
+                catch 
                 {
                     return "1000+";
-                }else if (int.Parse(text) < 0)
-                {
-                    return "1-";
-                }else
-                {
-                    return "empty";
                 }
             };
         }
@@ -111,6 +120,16 @@ namespace BemisAutoTyper
 
         private async Task StartTypingAsync(string text, int interval, bool? turboMode)
         {
+            if (IS_RUNNING)
+            {
+                return;
+            }
+            else
+            {
+                IS_RUNNING = true;
+                StartButton.IsEnabled = false;
+                DataTextBox.IsEnabled = false;
+            }
             int totalCharacters = text.Length;
 
             if (turboMode ?? false)
@@ -140,6 +159,11 @@ namespace BemisAutoTyper
 
             // Ensure the progress bar reaches 100% after typing is completed
             Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = 100);
+            IS_RUNNING = false;
+            StartButton.IsEnabled = true;
+            DataTextBox.IsEnabled = true;
+            await Task.Delay(250);
+            Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = 0);
         }
 
 
