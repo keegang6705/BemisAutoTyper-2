@@ -4,7 +4,6 @@ using System.Windows.Input;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-
 namespace BemisAutoTyper
 {
     /// <summary>
@@ -23,7 +22,7 @@ namespace BemisAutoTyper
         public MainWindow()
         {
             InitializeComponent();
-            KeyDown += MainWindow_KeyDown;
+            KeyDown+=OnKeyDown;
         }
         private void TextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -96,7 +95,9 @@ namespace BemisAutoTyper
         {
             IntervalTextBox.IsEnabled = true;
         }
-        private async void MainWindow_KeyDown(object sender, KeyEventArgs e)
+
+
+        private async void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F8)
             {
