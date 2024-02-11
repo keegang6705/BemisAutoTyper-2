@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:BemisAutoTyper"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="400"
+        Title="BemisAutoTyper 2.0.0" Height="400" Width="400"
+        Icon="D:\keegang project\app\BemisAutoTyper\BemisAutoTyper\col_studio.ico"
         Topmost="True">
     <Grid Background="#333">
         <Grid.RowDefinitions>

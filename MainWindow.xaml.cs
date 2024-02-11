@@ -184,6 +184,7 @@ namespace BemisAutoTyper
             await C_Delay(250);
             // Get the text from the TextBox
             string textToType = DataTextBox.Text;
+            textToType = Regex.Replace(textToType, "\r\n|\n", "\t\t");
             int interval;
             if (!int.TryParse(IntervalTextBox.Text, out interval))
             {
