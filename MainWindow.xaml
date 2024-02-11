@@ -57,7 +57,7 @@
         <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="3" VerticalAlignment="Top" Height="27" Width="76" Foreground="White" FontSize="16" Text="Interval (s)"/>
         <TextBlock Grid.Column="1" HorizontalAlignment="Left" Margin="10,49,0,0" Grid.Row="3" VerticalAlignment="Top" Height="27" Width="90" Foreground="White" FontSize="16" Text="Turbo Mode"/>
         <ProgressBar x:Name="TypeProgressbar" Grid.ColumnSpan="5" HorizontalAlignment="Left" Height="10" Grid.Row="5" VerticalAlignment="Center" Width="800"/>
-        <Button x:Name="StartButton" Grid.Column="2" Content="Start(f8)" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Height="35" Width="102" FontSize="20" BorderBrush="Black" Background="White" Foreground="Black"/>
+        <Button x:Name="StartButton" Grid.Column="2" Content="Start" HorizontalAlignment="Center" Grid.Row="4" VerticalAlignment="Center" Height="35" Width="102" FontSize="20" BorderBrush="Black" Background="White" Foreground="Black" Click="StartButton_Click"/>
         <CheckBox x:Name="TurboModeCheckBox" Grid.Column="2" HorizontalAlignment="Center" Margin="0,55,0,0" Grid.Row="3" VerticalAlignment="Top" Background="White" BorderBrush="Black" Checked="TurboModeCheckBox_Checked" Unchecked="TurboModeCheckBox_UnChecked" Foreground="White" IsChecked="False"/>
 
     </Grid>

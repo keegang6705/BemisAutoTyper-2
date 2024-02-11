@@ -22,7 +22,6 @@ namespace BemisAutoTyper
         public MainWindow()
         {
             InitializeComponent();
-            KeyDown+=OnKeyDown;
         }
         private void TextBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
@@ -118,7 +117,10 @@ namespace BemisAutoTyper
                 await StartTypingAsync(textToType, interval, TurboModeCheckBox.IsChecked);
             }
         }
-
+        private async Task C_Delay(int time)
+        {
+            await Task.Delay(time);
+        }
         private async Task StartTypingAsync(string text, int interval, bool? turboMode)
         {
             if (IS_RUNNING)
@@ -138,7 +140,7 @@ namespace BemisAutoTyper
                 for (int i = 0; i < text.Length; i++)
                 {
                     // Update progress bar
-                    Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = (i + 1) * 100 / totalCharacters);
+                    Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = ((i + 1) * 100 / totalCharacters)/2);
 
                     keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYDOWN, UIntPtr.Zero); // Key down
                     keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYUP, UIntPtr.Zero);   // Key up
@@ -149,7 +151,7 @@ namespace BemisAutoTyper
                 for (int i = 0; i < text.Length; i++)
                 {
                     // Update progress bar
-                    Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = (i + 1) * 100 / totalCharacters);
+                    Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = ((i + 1) * 100 / totalCharacters)/2);
 
                     keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYDOWN, UIntPtr.Zero); // Key down
                     keybd_event((byte)char.ToUpper(text[i]), 0, KEYEVENTF_KEYUP, UIntPtr.Zero);   // Key up
@@ -167,8 +169,38 @@ namespace BemisAutoTyper
             Application.Current.Dispatcher.Invoke(() => TypeProgressbar.Value = 0);
         }
 
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+            StartButton.IsEnabled = false;
+            DataTextBox.IsEnabled = false;
+            StartButton.Content = "3\n";
+            await C_Delay(1000);
+            StartButton.Content = "2\n";
+            await C_Delay(1000);
+            StartButton.Content = "1\n";
+            await C_Delay(1000);
+            StartButton.Content = "กำลังพิมพ์\n";
+            await C_Delay(250);
+            // Get the text from the TextBox
+            string textToType = DataTextBox.Text;
+            int interval;
+            if (!int.TryParse(IntervalTextBox.Text, out interval))
+            {
+                // Handle invalid input from IntervalTextBox
+                MessageBox.Show("Invalid interval value.");
+                return;
+            }
 
+            // Clear progress bar before typing
+            TypeProgressbar.Value = 0;
 
+            // Start typing based on the specified settings
+            await StartTypingAsync(textToType, interval, TurboModeCheckBox.IsChecked);
+            StartButton.Content = "สำเร็จ\n";
+            await C_Delay(500);
+            StartButton.Content = "Start\n";
 
+        }
     }
 }
